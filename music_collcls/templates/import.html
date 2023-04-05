@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="post" action="{% url 'import' %}">
+    {% csrf_token %}
+    <button type="submit" name="import_tracks_data">Import tracks from SQL</button><br>
+    <button type="submit" name="import_exercises_data">Import Exercises from SQL</button><br>
+    <button type="submit" name="import_tracksexercises_data">Import TracksExercises from SQL</button><br>
+    <button type="submit" name="delete_tracks">Delete all tracks</button>
+</form>
+
+{% if tracks_success %}
+    <p>Track Data imported successfully!</p>
+{% endif %}
+
+{% if exercises_success %}
+    <p>Exercise Data imported successfully!</p>
+{% endif %}
+
+{% if exercise_track_success %}
+    <p>TracksExercise Data imported successfully!</p>
+{% endif %}
+
+
+{% if deleted %}
+    <p>All tracks deleted successfully!</p>
+{% endif %}
+{% endblock %}

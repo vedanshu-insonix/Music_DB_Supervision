@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Edit Playlist details</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-custom">
+      <i class="material-icons">check</i>
+    </button>
+    <a href="{% url 'playlist_list' %}">
+      <i class="material-icons">cancel</i>
+  </form>
+{% endblock %}
+
+<style>
+  .btn-custom {
+  background-color: transparent;
+  color: #0725cc;
+  border: none;
+}
+
+</style>

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <h1>New Playlist</h1>
+  <form method="post" class="needs-validation" novalidate>
+    {% csrf_token %}
+    <table class="table">
+      <tbody>
+        <tr>
+          <th><label for="{{ form.strPlaylistName.id_for_label }}">Playlist Name</label></th>
+          <td>{{ form.strPlaylistName }}</td>
+        </tr>
+        <tr>
+          <th><label for="{{ form.strPlaylistDate.id_for_label }}">Playlist Date</label></th>
+          <td>{{ form.strPlaylistDate }}</td>
+        </tr>
+        <tr>
+          <th><label for="{{ form.strPlaylistLocation.id_for_label }}">Playlist Location</label></th>
+          <td>{{ form.strPlaylistLocation }}</td>
+        </tr>
+        <tr>
+          <th><label for="{{ form.memPlaylistDescription.id_for_label }}">Playlist Description</label></th>
+          <td>{{ form.memPlaylistDescription }}</td>
+        </tr>
+        <tr>
+          <th><label for="{{ form.strPlaylistType.id_for_label }}">Playlist Type</label></th>
+          <td>{{ form.strPlaylistType }}</td>
+        </tr>
+        <tr>
+          <th><label class="form-check-label" for="{{ form.ysnFavorite.id_for_label }}">Favorite</label></th>
+          <td>{{ form.ysnFavorite }} </td>
+        </tr>
+        <tr>
+          <th><label for="{{ form.strAuthor.id_for_label }}">Author</label></th>
+          <td>{{ form.strAuthor }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Create Playlist</button>
+    <a href="{% url 'playlist_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+  <br>
+</div>
+{% endblock %}

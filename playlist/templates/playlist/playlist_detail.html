@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ playlist.strPlaylistName }}</h1>
+<p>{{ playlist.memPlaylistDescription }}</p>
+<h2>Tracks</h2> 
+<a href="{% url 'add_tracks' playlist.klngPlaylistID %}" class="btn btn-secondary btn-sm">Add playlist</a>
+    
+
+
+<table id="playlist-table" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Sequence</th>
+            <th>Exercise</th>
+            <th>Collection</th>
+            <th>Track Title</th>
+            <th>Artist</th>
+            <th>Album</th>
+            <th>Track Length</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for playlist_track in playlist_tracks %}
+            <tr>
+                <td>{{ playlist_track.sequence_order }}</td>
+                <td>{{ playlist_track.track.strRefTrCIMEB }}</td>
+                <td>{{ playlist_track.exercise.strExerciseEN }}</td>
+                <td>{{ playlist_track.track.strTrackTitle }}</td>
+                <td>{{ playlist_track.track.strArtist }}</td>
+                <td>{{ playlist_track.track.strAlbum }}</td>
+                <td>{{ playlist_track.track.durTrackLength }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

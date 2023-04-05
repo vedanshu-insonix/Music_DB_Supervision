@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h3>Playlist: {{ playlist.strPlaylistName }}</h3><br>
+    <button type="button"><a href= "{{request.get_full_path}}?t=clear">clear the playlist</a></button>
+    <a href="{% url 'playlist_createe' %}" class="btn btn-secondary btn-sm" >Save to playlist</a>
+
+
+    <table id="playlist-table" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Sequence</th>
+                <th>Exercise</th>
+                <th>Collection</th>
+                <th>Track Title</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Track Length</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for playlist_track in playlist_tracks %}
+                <tr>
+                    <td>{{ playlist_track.sequence_order }}</td>
+                    <td>{{ playlist_track.track.strRefTrCIMEB }}</td>
+                    <td>{{ playlist_track.exercise.strExerciseEN }}</td>
+                    <td>{{ playlist_track.track.strTrackTitle }}</td>
+                    <td>{{ playlist_track.track.strArtist }}</td>
+                    <td>{{ playlist_track.track.strAlbum }}</td>
+                    <td>{{ playlist_track.track.durTrackLength }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  
+
+
+    <h2>Musics for exercise: {{ exercise.strExerciseEN }}</h2>
+    {% csrf_token %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Collection</th>
+                <th>Track Title</th>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Track Length</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for exercise_track in exercise_tracks %}
+                <tr>
+                    <td>{{ exercise_track.track.strRefTrCIMEB }}</td>
+                    <td> 
+                        <a href="{% url 'serve_file' exercise_track.track.strFile %}" onclick="window.open(this.href, 'pop-up', 'width=600,height=400'); 
+                                return false;">
+                            {{ exercise_track.track.strTrackTitle }}
+                        </a>
+                        
+                    </td>
+                    <td>{{ exercise_track.track.strArtist }}</td>
+                    <td>{{ exercise_track.track.strAlbum }}</td>
+                    <td>{{ exercise_track.track.durTrackLength }}</td>
+                    <td>
+                        <button type="button" >
+                                    
+                           <a href= "{{request.get_full_path}}?t={{ exercise_track.track.klngTrackID }}"> Add </a>
+                            </button>
+
+                            
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No tracks found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+{% endblock %}

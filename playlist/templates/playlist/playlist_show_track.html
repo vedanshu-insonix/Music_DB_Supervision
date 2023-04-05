@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    th, td {
+        text-align: left;
+        padding: 8px;
+        max-width: 20ch;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    
+    td:hover {
+        cursor: pointer;
+        white-space: normal;
+        overflow: visible;
+        z-index: 1;
+        position: relative;
+        background-color: #f9f9f9;
+    }
+
+    .edit-btn, .delete-btn {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+</style>
+
+{% endblock %}
+
+ 
+
+{% block content %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Artist</th>
+      <th>Album</th>
+      <th>Reference</th>
+      <th>Duration</th>
+      <th>File</th>
+      <th>Vinyl</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for track in tracks %}
+    <tr>
+      <td>{{ track.strTrackTitle }}</a></td>
+      <td>{{ track.strArtist }}</td>
+      <td>{{ track.strAlbum }}</td>
+      <td>{{ track.strRefTrCIMEB }}</td>
+      <td>{{ track.durTrackLength }}</td>
+      <td>{{ track.strFile }}</td>
+      <td>{% if track.ysnVinyl %}Yes{% else %}No{% endif %}</td>
+      <td>
+        <a href="{{request.get_full_path}}?t={{ track.pk }}" class="edit-btn">
+          Add
+        </a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="7">No Tracks available.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

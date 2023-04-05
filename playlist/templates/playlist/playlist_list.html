@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block css %}
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    th, td {
+        text-align: left;
+        padding: 8px;
+        max-width: 20ch;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    
+    td:hover {
+        cursor: pointer;
+        white-space: normal;
+        overflow: visible;
+        z-index: 1;
+        position: relative;
+        background-color: #f9f9f9;
+    }
+
+    .edit-btn, .delete-btn {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+</style>
+
+{% endblock %}
+
+ 
+
+{% block content %}
+<h1>Playlists</h1>
+<a href="{% url 'playlist_create' %}" class="btn btn-primary mb-3">Create New Playlist</a>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Location</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Favorite</th>
+      <th>Author</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for playlist in playlists %}
+    <tr>
+      <td>
+        <a href="{% url 'playlist_edit' playlist.pk %}" class="edit-btn">
+          <i class="material-icons">edit</i>
+        </a>
+        <a href="{% url 'playlist_delete' playlist.pk %}" class="delete-btn">
+          <i class="material-icons">delete</i>
+        </a>
+      </td>
+      <td><a href="{% url 'playlist_detail' playlist.pk %}">{{ playlist.strPlaylistName }}</a></td>
+      <td>{{ playlist.strPlaylistDate|date:"d-M-y" }}</td>
+      <td>{{ playlist.strPlaylistLocation }}</td>
+      <td>{{ playlist.memPlaylistDescription }}</td>
+      <td>{{ playlist.strPlaylistType }}</td>
+      <td>{% if playlist.ysnFavorite %}Yes{% else %}No{% endif %}</td>
+      <td>{{ playlist.strAuthor }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="7">No playlists available.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

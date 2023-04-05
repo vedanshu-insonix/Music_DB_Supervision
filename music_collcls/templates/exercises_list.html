@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+  .description-cell {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
+  .description-cell.active {
+      max-width: none;
+      white-space: normal;
+      overflow: visible;
+      text-overflow: unset;
+  }
+</style>
+
+<form method="GET">
+  <label>Search exercises:</label>
+  <input type="text" name="search" value="{{ search_query|default:'' }}">
+  <br><br>
+
+  <label>Filter by line of Vivencia:</label><br>
+      <input type="checkbox" name="line" value="V" {% if 'V' in lines_filter %}checked{% endif %}> V
+      <input type="checkbox" name="line" value="S" {% if 'S' in lines_filter %}checked{% endif %}> S
+      <input type="checkbox" name="line" value="C" {% if 'C' in lines_filter %}checked{% endif %}> C
+      <input type="checkbox" name="line" value="A" {% if 'A' in lines_filter %}checked{% endif %}> A
+      <input type="checkbox" name="line" value="T" {% if 'T' in lines_filter %}checked{% endif %}> T
+  <button type="button" onclick="resetCheckboxes(false)">no filter</button>
+  <button type="button" onclick="resetCheckboxes(true)">all</button>
+  <br><br>
+
+  <input type="submit" value="Apply filters">
+  
+</form>
+
+<script>
+  function resetCheckboxes(option) {
+      var checkboxes = document.querySelectorAll('input[type=checkbox][name=line]');
+      checkboxes.forEach(function(checkbox) {
+          checkbox.checked = option;
+      });
+  }
+</script>
+
+    <hr>
+
+    <h2>Exercises</h2>
+    {% if exercises.has_other_pages %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if exercises.has_previous %}
+                    <a href="{{request.get_full_path}}&page=1">&laquo; first</a>
+                    <a href="{{request.get_full_path}}&page={{ exercises.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current-page">
+                    Page {{ exercises.number }} of {{ exercises.paginator.num_pages }}.
+                </span>
+
+                {% if exercises.has_next %}
+                    <a href="{{request.get_full_path}}&page={{ exercises.next_page_number }}">next</a>
+                    <a href="{{request.get_full_path}}&page={{ exercises.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    
+
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Exercise</th>
+            <th scope="col">Exercise description (click to expand)</th>
+            <th scope="col">V</th>
+            <th scope="col">S</th>
+            <th scope="col">C</th>
+            <th scope="col">A</th>
+            <th scope="col">T</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for exercise in exercises %}
+          <tr>
+            <td><a href="{% url 'exercise_tracks' exercise.klngExerciseID %}">{{ exercise.strExerciseEN }}</a></td>
+            
+            <td class="description-cell" onclick="this.classList.toggle('active')">
+              {{ exercise.memDescriptionEN }}
+            </td>
+              
+            <td>{% if exercise.ysnLineV %}X{% endif %}</td>
+            <td>{% if exercise.ysnLineS %}X{% endif %}</td>
+            <td>{% if exercise.ysnLineC %}X{% endif %}</td>
+            <td>{% if exercise.ysnLineA %}X{% endif %}</td>
+            <td>{% if exercise.ysnLineT %}X{% endif %}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td>No exercises found.</td>
+          </tr>
+          {% endfor %}  
+        </tbody>
+      </table>
+      
+{% endblock %}

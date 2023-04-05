@@ -1,0 +1,113 @@
+on the playlist_list.html template below add a column to the leftmost position of the table with a button  to edit the line.
+-- models.py
+from django.db import models
+from music_collcls.models import Tracks, Exercises
+class Playlist(models.Model):
+    klngPlaylistID = models.IntegerField(primary_key=True)
+    strPlaylistName = models.CharField(max_length=255, null=True)
+    strPlaylistDate = models.DateTimeField(null=True)
+    strPlaylistLocation = models.CharField(max_length=255, null=True)
+    memPlaylistDescription = models.TextField(null=True)
+    strPlaylistType = models.CharField(max_length=255, null=True, choices=[('class', 'Class'), ('workshop', 'Workshop')])
+    ysnFavorite = models.BooleanField(null=True)
+    strAuthor = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        db_table = "Playlists"
+
+class PlaylistTrack(models.Model):
+    Playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
+    track = models.ForeignKey(Tracks, on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercises, on_delete=models.CASCADE)
+    sequence_order = models.IntegerField(null=True)
+    memUserComment = models.TextField(null=True)
+
+    class Meta:
+        db_table = "PlaylistTracks"
+
+--views.py
+from django.shortcuts import render, get_object_or_404
+from .models import Playlist, PlaylistTrack
+
+def playlist_list(request):
+    playlists = Playlist.objects.all()
+    return render(request, 'playlist/playlist_list.html', {'playlists': playlists})
+
+def playlist_detail(request, pk):
+    playlist = get_object_or_404(Playlist, pk=pk)
+    tracks = PlaylistTrack.objects.filter(Playlist=playlist).order_by('sequence_order')
+    return render(request, 'playlist/playlist_detail.html', {'playlist': playlist, 'tracks': tracks})
+
+-- forms.py
+from django import forms
+from .models import Playlist
+
+class PlaylistForm(forms.ModelForm):
+    class Meta:
+        model = Playlist
+        fields = '__all__'
+
+--playlist_list.html
+{% extends 'base.html' %}
+
+{% block css %}
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    
+    th, td {
+        text-align: left;
+        padding: 8px;
+        max-width: 20ch;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    
+    td:hover {
+        cursor: pointer;
+        white-space: normal;
+        overflow: visible;
+        z-index: 1;
+        position: relative;
+        background-color: #f9f9f9;
+    }
+</style>
+
+{% endblock %}
+
+ 
+
+{% block content %}
+<h1>Playlists</h1>
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Date</th>
+      <th>Location</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Favorite</th>
+      <th>Author</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for playlist in playlists %}
+    <tr>
+      <td><a href="{% url 'playlist_detail' playlist.pk %}">{{ playlist.strPlaylistName }}</a></td>
+      <td>{{ playlist.strPlaylistDate }}</td>
+      <td>{{ playlist.strPlaylistLocation }}</td>
+      <td>{{ playlist.memPlaylistDescription }}</td>
+      <td>{{ playlist.strPlaylistType }}</td>
+      <td>{% if playlist.ysnFavorite %}Yes{% else %}No{% endif %}</td>
+      <td>{{ playlist.strAuthor }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="7">No playlists available.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

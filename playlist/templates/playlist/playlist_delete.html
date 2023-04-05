@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Delete playlist "{{ object.strPlaylistName }}"?</h2>
+<form action="{% url 'playlist_delete' object.pk %}" method="POST">
+  {% csrf_token %}
+  <button type="submit">
+    <i class="material-icons">check</i>
+  </button>
+  <a href="{% url 'playlist_list' %}">
+    <i class="material-icons">cancel</i>
+  </a>
+</form>
+{% endblock %}
