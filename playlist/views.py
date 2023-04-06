@@ -3,17 +3,21 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django import urls
 from .models import Playlist, PlaylistTrack
 from music_collcls.models import Tracks, ExerciseTrack
-from .forms import PlaylistForm, PlaylistDeleteForm
+from .forms import PlaylistForm, PlaylistDeleteForm, TrackForm
 from django.shortcuts import render, redirect
 from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from datetime import date
 
-
 class PlaylistDeleteView(DeleteView):
     model = Playlist
     success_url = reverse_lazy('playlist_list')
     template_name = 'playlist/playlist_delete.html'
+    
+class TrackDeleteView(DeleteView):
+    model = PlaylistTrack
+    success_url = reverse_lazy('playlist_list')
+    template_name = 'playlist/track_delete.html'      
 
 from .forms import PlaylistForm
 
@@ -21,6 +25,11 @@ def playlist_list(request):
     playlists = Playlist.objects.all()
     form = PlaylistForm()
     return render(request, 'playlist/playlist_list.html', {'playlists': playlists, 'form': form})
+
+def track_list(request):
+    tracks = PlaylistTrack.objects.all()
+    form2 = TrackForm()
+    return render(request, 'playlist/playlist_detail.html', {'tracks': tracks, 'form2': form2})
 
 
 def playlist_detail(request, pk):
@@ -40,6 +49,35 @@ def playlist_edit(request, pk):
     else:
         form = PlaylistForm(instance=playlist)
     return render(request, 'playlist/playlist_edit.html', {'form': form})
+
+
+def track_edit(request, pk):
+    track = get_object_or_404(PlaylistTrack, pk=pk)
+    pl_id = track.Playlist
+    track_rec = PlaylistTrack.objects.filter(Playlist=pl_id).order_by('sequence_order')
+    total_track = len(track_rec)
+    form2 = None
+    if request.method == 'POST':
+        form2 = TrackForm(request.POST, instance=track)
+        seq=request.POST.get('sequence_order')
+        if int(seq) <= int(total_track):
+            old_seq = track.sequence_order
+            if int(seq) >= int(old_seq):
+                gte_rec = PlaylistTrack.objects.filter(Playlist=pl_id, sequence_order__range = [int(old_seq),int(seq)]).values('id','sequence_order')
+                sq = gte_rec
+                for i in range(len(sq)):
+                    PlaylistTrack.objects.filter(pk=sq[i]['id'], Playlist=pl_id).update(sequence_order=int(sq[i]['sequence_order'])-1)
+            if int(seq) <= int(old_seq):
+                gte_rec = PlaylistTrack.objects.filter(Playlist=pl_id, sequence_order__range = [int(seq),int(old_seq)]).values('id','sequence_order')
+                sq = gte_rec
+                for i in range(len(sq)):
+                    PlaylistTrack.objects.filter(pk=sq[i]['id'], Playlist=pl_id).update(sequence_order=int(sq[i]['sequence_order'])+1) 
+            if form2.is_valid():   
+                form2.save()
+            return redirect('track_list')
+    else:
+        form2 = TrackForm(instance=track)
+    return render(request, 'playlist/track_edit.html', {'form2': form2})
 
 def playlist_create(request):
     if request.method == 'POST':
@@ -72,4 +110,3 @@ def add_tracks(request,track_id):
             return redirect(request.path_info)
             
     return render(request, 'playlist/playlist_show_track.html', {'tracks': tracks})
-        
