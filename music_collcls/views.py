@@ -55,6 +55,7 @@ def exercises_list(request):
                  reduce(and_, [Q(**{'ysnLine{}__in'.format(line): [True]}) for line in lines_filter])
             )
 
+
     # Pagination
     paginator = Paginator(exercises_list, 10) # 10 exercises per page
     page = request.GET.get('page')
@@ -126,6 +127,8 @@ def add_track_to_playlist(request, exercise_id):
         return render(request, 'exercise_tracks.html', context)
     
     # return render(request, 'add_track_to_playlist.html', {'exercise': exercise, 'exercise_tracks': exercise_tracks})
+
+# ------ Code block to Import data from SQL Server ------ #
 
 # ------ Code block to Import data from SQL Server ------ #
 
