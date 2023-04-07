@@ -10,6 +10,7 @@
 <table id="playlist-table" class="table table-bordered">
     <thead>
         <tr>
+            <th></th>
             <th>Sequence</th>
             <th>Exercise</th>
             <th>Collection</th>
@@ -22,6 +23,14 @@
     <tbody>
         {% for playlist_track in playlist_tracks %}
             <tr>
+                <td>
+                    <a href="{% url 'track_edit' playlist_track.pk %}?p={{ playlist.klngPlaylistID }}" class="edit-btn">
+                      <i class="material-icons">edit</i>
+                    </a>
+                    <a href="{% url 'track_delete' playlist_track.pk %}" class="delete-btn">
+                      <i class="material-icons">delete</i>
+                    </a>
+                </td>
                 <td>{{ playlist_track.sequence_order }}</td>
                 <td>{{ playlist_track.track.strRefTrCIMEB }}</td>
                 <td>{{ playlist_track.exercise.strExerciseEN }}</td>
