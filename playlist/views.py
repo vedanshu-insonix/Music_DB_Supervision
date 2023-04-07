@@ -9,6 +9,7 @@ from django.views.generic import DeleteView
 from django.urls import reverse_lazy
 from datetime import date
 
+
 class PlaylistDeleteView(DeleteView):
     model = Playlist
     success_url = reverse_lazy('playlist_list')
@@ -110,3 +111,4 @@ def add_tracks(request,track_id):
             return redirect(request.path_info)
             
     return render(request, 'playlist/playlist_show_track.html', {'tracks': tracks})
+        
